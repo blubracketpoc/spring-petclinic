@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -15,15 +15,28 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '8', '11', '17' ]
+        java: ['8', '11', '17']
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{matrix.java}}
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{matrix.java}}
-          distribution: 'adopt'
-          cache: maven
-      - name: Build with Maven Wrapper
-        run: ./mvnw -B package
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{matrix.java}}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{matrix.java}}
+        distribution: 'adopt'
+        cache: maven
+    - name: Build with Maven Wrapper
+      run: ./mvnw -B package
+    - name: Assess and Scan with Contrast
+      run: ./mvnw verify -Pcontrast-assess
+      env:
+        CONTRAST_USERNAME: ${{ secrets.CONTRAST_USERNAME }}
+        CONTRAST_API_KEY: ${{ secrets.CONTRAST_API_KEY }}
+        CONTRAST_SERVICE_KEY: ${{ secrets.CONTRAST_SERVICE_KEY }}
+        CONTRAST_URL: ${{ secrets.CONTRAST_URL }}
+        CONTRAST_ORG_ID: ${{ secrets.CONTRAST_ORG_ID }}
+        CONTRAST_APP_NAME: ${{ github.repository }} # repo_owner/repo_name
+        CONTRAST_SERVER_NAME: github
+        CONTRAST_COMMIT_HASH: ${{ github.sha }}
+        CONTRAST_REPOSITORY: "${{ github.repositoryUrl }}"
+        CONTRAST_MIN_SEVERITY: Critical
