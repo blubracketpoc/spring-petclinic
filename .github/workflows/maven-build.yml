@@ -27,3 +27,21 @@ jobs:
         cache: maven
     - name: Build with Maven Wrapper
       run: ./mvnw -B package
+    - name: Assess and Scan with Contrast
+      run: CONTRAST_BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}} ./mvnw verify
+        -Pcontrast-assess
+      env:
+        CONTRAST_USERNAME: ${{ secrets.CONTRAST_USERNAME }}
+        CONTRAST_API_KEY: ${{ secrets.CONTRAST_API_KEY }}
+        CONTRAST_SERVICE_KEY: ${{ secrets.CONTRAST_SERVICE_KEY }}
+        CONTRAST_URL: ${{ secrets.CONTRAST_URL }}
+        CONTRAST_ORG_ID: ${{ secrets.CONTRAST_ORG_ID }}
+        CONTRAST_SERVER_NAME: github
+        CONTRAST_APP_NAME: ${{ github.repository }} # repo_owner/repo_name
+        CONTRAST_APP_VERSION: ${{ github.sha }}
+        CONTRAST_REPOSITORY: ${{ github.repositoryUrl }}
+        CONTRAST_BASE_BRANCH_NAME: ${{ github.base_ref }}
+        CONTRAST_COMMIT_HASH: ${{ github.sha }}
+        CONTRAST_PULL_REQUEST: ${{ github.event.number }}
+        CONTRAST_BUILD_NUMBER: ${{ github.run_id }}
+        CONTRAST_MIN_SEVERITY: Critical

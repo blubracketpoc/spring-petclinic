@@ -221,6 +221,23 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>com.contrastsecurity</groupId>
+        <artifactId>contrast-maven-plugin</artifactId>
+        <version>2.13.2</version>
+        <configuration>
+          <username>${env.CONTRAST_USERNAME}</username>
+          <apiKey>${env.CONTRAST_API_KEY}</apiKey>
+          <serviceKey>${env.CONTRAST_SERVICE_KEY}</serviceKey>
+          <url>${env.CONTRAST_URL}</url>
+          <orgUuid>${env.CONTRAST_ORG_ID}</orgUuid>
+          <appName>${env.CONTRAST_APP_NAME}</appName>
+          <appVersion>${env.CONTRAST_APP_VERSION}</appVersion>
+          <serverName>${env.CONTRAST_SERVER_NAME}</serverName>
+          <applicationSessionMetadata>commitHash=${env.CONTRAST_COMMIT_HASH},repository=${env.CONTRAST_REPOSITORY},branchName=${env.CONTRAST_BRANCH_NAME},baseBranchName=${env.CONTRAST_BASE_BRANCH_NAME},pullRequest=${env.CONTRAST_PULL_REQUEST},buildNumber=${env.CONTRAST_BUILD_NUMBER}</applicationSessionMetadata>
+          <minSeverity>${env.CONTRAST_MIN_SEVERITY}</minSeverity>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -385,6 +402,31 @@
             </plugin>
           </plugins>
         </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>contrast-assess</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.contrastsecurity</groupId>
+            <artifactId>contrast-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install</id>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
